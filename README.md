@@ -106,10 +106,10 @@ src/
 
 ### Environment
 
-Create `.env.local` in the project root:
+Copy `.env.example` to `.env.local` in the project root and adjust as needed:
 
-```
-NEXT_PUBLIC_API_URL=http://localhost:4000
+```bash
+cp .env.example .env.local
 ```
 
 ### Install & Run
