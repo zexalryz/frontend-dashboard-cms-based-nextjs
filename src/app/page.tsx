@@ -34,41 +34,41 @@ export default function LoginPage() {
     setSubmitting(false);
   };
 
-  if (loading) return <div className="flex justify-center mt-20 text-gray-400">Loading...</div>;
+  if (loading) return <div className="flex justify-center mt-20 text-gray-400 dark:text-gray-500">Loading...</div>;
   if (user) return null;
 
   return (
     <div className="max-w-sm mx-auto mt-20">
-      <h1 className="text-2xl font-bold text-center mb-6">
+      <h1 className="text-2xl font-bold text-center mb-6 dark:text-white">
         {mode === 'login' ? 'Sign In' : 'Create Account'}
       </h1>
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow space-y-4">
+      <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-1">Username</label>
-          <input name="username" required className="w-full border rounded px-3 py-2 text-sm" />
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">Username</label>
+          <input name="username" required className="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
         </div>
 
         {mode === 'register' && (
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input name="email" type="email" required className="w-full border rounded px-3 py-2 text-sm" />
+            <label className="block text-sm font-medium mb-1 dark:text-gray-300">Email</label>
+            <input name="email" type="email" required className="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
           </div>
         )}
 
         <div>
-          <label className="block text-sm font-medium mb-1">Password</label>
-          <input name="password" type="password" required className="w-full border rounded px-3 py-2 text-sm" />
+          <label className="block text-sm font-medium mb-1 dark:text-gray-300">Password</label>
+          <input name="password" type="password" required className="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
         </div>
 
         {mode === 'register' && (
           <div>
-            <label className="block text-sm font-medium mb-1">Invite Code</label>
-            <input name="inviteCode" required className="w-full border rounded px-3 py-2 text-sm" />
+            <label className="block text-sm font-medium mb-1 dark:text-gray-300">Invite Code</label>
+            <input name="inviteCode" required className="w-full border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" />
           </div>
         )}
 
-        {error && <p className="text-red-600 text-sm">{error}</p>}
+        {error && <p className="text-red-600 dark:text-red-400 text-sm">{error}</p>}
 
         <button
           type="submit"
@@ -79,7 +79,7 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-gray-500 mt-4">
+      <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
         {mode === 'login' ? (
           <>No account?{' '}<button onClick={() => { setMode('register'); setError(''); }} className="text-blue-600 underline">Register</button></>
         ) : (

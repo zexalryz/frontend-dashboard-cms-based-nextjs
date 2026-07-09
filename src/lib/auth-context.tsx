@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
 import { getTokens, clearTokens, login as apiLogin, register as apiRegister, logout as apiLogout, getProfile, type UserProfile, type Tokens } from './api';
+import { logActivity } from './activity';
 
 interface AuthState {
   user: UserProfile | null;
@@ -51,6 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (profileRes.success && profileRes.data) {
         setState({ user: profileRes.data, tokens: newTokens, loading: false });
       }
+      logActivity('login', `Logged in as ${username}`);
       return null;
     }
     return res.error?.message || 'Login failed';
@@ -65,12 +67,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (profileRes.success && profileRes.data) {
         setState({ user: profileRes.data, tokens: newTokens, loading: false });
       }
+      logActivity('register', `Created account ${username}`);
       return null;
     }
     return res.error?.message || 'Registration failed';
   }, []);
 
   const logout = useCallback(async () => {
+    logActivity('logout', 'Logged out');
     await apiLogout();
     setState({ user: null, tokens: null, loading: false });
   }, []);

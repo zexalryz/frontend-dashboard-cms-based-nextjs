@@ -118,28 +118,28 @@ export default function AdminDashboard() {
   const totalPages = Math.ceil(total / take);
   const currentPage = Math.floor(skip / take) + 1;
 
-  if (loading) return <div className="text-center mt-20 text-gray-400">Loading...</div>;
+  if (loading) return <div className="text-center mt-20 text-gray-400 dark:text-gray-500">Loading...</div>;
   if (!user || !isStaff(user.role)) return null;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">
+      <h1 className="text-2xl font-bold mb-6 dark:text-white">
         {isAdmin(user.role) ? 'Admin Panel' : 'Moderator Panel'}
       </h1>
 
       {/* ── Invite code generator ── */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6">
-        <h2 className="text-lg font-semibold mb-3">Generate Invite Codes</h2>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6 dark:shadow-gray-900/50">
+        <h2 className="text-lg font-semibold mb-3 dark:text-white">Generate Invite Codes</h2>
         <div className="flex items-end gap-4 mb-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Count</label>
+            <label className="block text-sm font-medium mb-1 dark:text-gray-300">Count</label>
             <input
               type="number"
               min={1}
               max={10}
               value={inviteCount}
               onChange={e => setInviteCount(Math.min(10, Math.max(1, parseInt(e.target.value) || 1)))}
-              className="w-20 border rounded px-3 py-2 text-sm"
+              className="w-20 border rounded px-3 py-2 text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
             />
           </div>
           <button
@@ -152,21 +152,21 @@ export default function AdminDashboard() {
           {codes.length > 0 && (
             <button
               onClick={handleCopy}
-              className="bg-gray-100 text-gray-700 px-4 py-2 rounded text-sm font-medium hover:bg-gray-200"
+              className="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded text-sm font-medium hover:bg-gray-200 dark:hover:bg-gray-600"
             >
               Copy All
             </button>
           )}
         </div>
-        {inviteMsg && <p className="text-green-600 text-sm mb-2">{inviteMsg}</p>}
-        {inviteErr && <p className="text-red-600 text-sm mb-2">{inviteErr}</p>}
+        {inviteMsg && <p className="text-green-600 dark:text-green-400 text-sm mb-2">{inviteMsg}</p>}
+        {inviteErr && <p className="text-red-600 dark:text-red-400 text-sm mb-2">{inviteErr}</p>}
         {codes.length > 0 && (
           <textarea
             ref={textareaRef}
             readOnly
             value={codes.join('\n')}
             rows={Math.min(codes.length, 5)}
-            className="w-full border rounded px-3 py-2 text-sm font-mono bg-gray-50 resize-none"
+            className="w-full border rounded px-3 py-2 text-sm font-mono bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white resize-none"
             onClick={e => (e.target as HTMLTextAreaElement).select()}
           />
         )}
@@ -175,32 +175,32 @@ export default function AdminDashboard() {
       {/* ── User management (ADMIN only) ── */}
       {isAdmin(user.role) && (
         <>
-          <p className="text-sm text-gray-500 mb-4">{total} user{total !== 1 ? 's' : ''} total</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">{total} user{total !== 1 ? 's' : ''} total</p>
 
-          {actionMsg && <p className="text-green-600 text-sm mb-2">{actionMsg}</p>}
-          {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
+          {actionMsg && <p className="text-green-600 dark:text-green-400 text-sm mb-2">{actionMsg}</p>}
+          {error && <p className="text-red-600 dark:text-red-400 text-sm mb-2">{error}</p>}
 
-          <div className="bg-white rounded-lg shadow overflow-x-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50 overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-gray-50 text-left">
-                  <th className="px-4 py-3 font-medium">Username</th>
-                  <th className="px-4 py-3 font-medium">Email</th>
-                  <th className="px-4 py-3 font-medium">Role</th>
-                  <th className="px-4 py-3 font-medium">Joined</th>
-                  <th className="px-4 py-3 font-medium">Actions</th>
+                <tr className="border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-700 text-left">
+                  <th className="px-4 py-3 font-medium dark:text-gray-200">Username</th>
+                  <th className="px-4 py-3 font-medium dark:text-gray-200">Email</th>
+                  <th className="px-4 py-3 font-medium dark:text-gray-200">Role</th>
+                  <th className="px-4 py-3 font-medium dark:text-gray-200">Joined</th>
+                  <th className="px-4 py-3 font-medium dark:text-gray-200">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map(u => (
-                  <tr key={u.id} className="border-b last:border-0 hover:bg-gray-50">
-                    <td className="px-4 py-3">{u.username}</td>
-                    <td className="px-4 py-3 text-gray-500">{u.email}</td>
+                  <tr key={u.id} className="border-b dark:border-gray-700 last:border-0 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+                    <td className="px-4 py-3 dark:text-white">{u.username}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400">{u.email}</td>
                     <td className="px-4 py-3">
                       <select
                         defaultValue={u.role}
                         onChange={e => handleRoleChange(u.id, e.target.value)}
-                        className="border rounded px-2 py-1 text-xs"
+                        className="border rounded px-2 py-1 text-xs dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         disabled={u.id === user.id}
                       >
                         <option value="USER">USER</option>
@@ -209,12 +209,12 @@ export default function AdminDashboard() {
                         <option value="ADMIN">ADMIN</option>
                       </select>
                     </td>
-                    <td className="px-4 py-3 text-gray-500 text-xs">{new Date(u.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-gray-500 dark:text-gray-400 text-xs">{new Date(u.createdAt).toLocaleDateString()}</td>
                     <td className="px-4 py-3">
                       {u.id !== user.id && (
                         <button
                           onClick={() => handleDelete(u.id)}
-                          className="text-red-600 hover:text-red-800 text-xs font-medium"
+                          className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 text-xs font-medium"
                         >
                           Delete
                         </button>
@@ -231,15 +231,15 @@ export default function AdminDashboard() {
               <button
                 onClick={() => refetch(skip - take)}
                 disabled={skip === 0}
-                className="px-3 py-1 border rounded disabled:opacity-30 hover:bg-gray-100"
+                className="px-3 py-1 border rounded dark:border-gray-600 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200"
               >
                 Previous
               </button>
-              <span className="text-gray-500">Page {currentPage} of {totalPages}</span>
+              <span className="text-gray-500 dark:text-gray-400">Page {currentPage} of {totalPages}</span>
               <button
                 onClick={() => refetch(skip + take)}
                 disabled={skip + take >= total}
-                className="px-3 py-1 border rounded disabled:opacity-30 hover:bg-gray-100"
+                className="px-3 py-1 border rounded dark:border-gray-600 disabled:opacity-30 hover:bg-gray-100 dark:hover:bg-gray-700 dark:text-gray-200"
               >
                 Next
               </button>

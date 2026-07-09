@@ -16,13 +16,21 @@ Built with **Next.js 16**, **React 19**, **TypeScript**, and **Tailwind CSS 4**.
 
 ### Dashboard
 - Role-aware landing page after login
-- Quick-links to Profile and Admin Panel (admin only)
-- Displays user info: username, email, role, join date
+- **Stats cards** — account age in days, role badge with role-specific color, email display
+- **Quick-links** to Profile Settings and Admin Panel (when role permits)
+- **Recent Activity Feed** — client-side log showing login, registration, logout, password changes, and account deletion events (last 10, stored in localStorage, clearable)
 
 ### Profile
 - View account details
-- Change password
-- Delete account (with confirmation, redirects to login)
+- **Profile Completeness** — progress bar with checklist (username, email, password changed), suggests changing password to reach 100%
+- Change password (logged as activity event)
+- Delete account (with confirmation, redirects to login, logged as activity event)
+
+### Dark / Light Mode
+- 🌙/☀️ toggle button in the navigation bar
+- Persists preference to `localStorage`
+- Respects system `prefers-color-scheme` on first visit
+- Applies Tailwind `dark:` variant across all pages and components
 
 ### Admin / Moderator Panel
 - Accessible to ADMIN and MODERATOR roles (title adapts to role)
@@ -65,20 +73,22 @@ All endpoints are relative to `NEXT_PUBLIC_API_URL` (default `http://localhost:4
 ```
 src/
 ├── app/
-│   ├── globals.css              # Tailwind base styles
-│   ├── layout.tsx               # Root layout: AuthProvider + Nav
+│   ├── globals.css              # Tailwind base styles + dark variant
+│   ├── layout.tsx               # Root layout: ThemeProvider + AuthProvider + Nav
 │   ├── page.tsx                 # Login / Register page
 │   ├── dashboard/
-│   │   ├── page.tsx             # Dashboard home
+│   │   ├── page.tsx             # Dashboard home (stats, activity feed, quick actions)
 │   │   └── admin/
 │   │       └── page.tsx         # Admin panel
 │   └── profile/
-│       └── page.tsx             # Profile settings
+│       └── page.tsx             # Profile settings (with completeness)
 ├── components/
-│   └── nav.tsx                  # Top navigation bar
+│   └── nav.tsx                  # Top navigation bar (with theme toggle)
 └── lib/
     ├── api.ts                   # API client with auth & auto-refresh
-    └── auth-context.tsx         # Auth state provider
+    ├── auth-context.tsx         # Auth state provider (logs activity events)
+    ├── activity.ts              # Activity feed storage & retrieval
+    └── theme-context.tsx        # Dark/light mode provider
 ```
 
 ---
@@ -130,8 +140,8 @@ npm run lint
 
 | Role | Capabilities |
 |------|-------------|
-| USER | Dashboard, Profile |
-| DONATOR | Dashboard, Profile |
+| USER | Dashboard (stats, activity feed), Profile (completeness, password change) |
+| DONATOR | Dashboard (stats, activity feed), Profile (completeness, password change) |
 | MODERATOR | Dashboard, Profile, Admin Panel (invite code generation) |
 | ADMIN | Dashboard, Profile, Admin Panel (invite codes, user list, role changes, user deletion) |
 
