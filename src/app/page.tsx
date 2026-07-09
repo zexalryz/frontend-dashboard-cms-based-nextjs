@@ -12,10 +12,10 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!loading && user) {
+    if (user) {
       router.replace(user.role === 'ADMIN' ? '/dashboard/admin' : '/dashboard');
     }
-  }, [user, loading, router]);
+  }, [user, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -33,9 +33,6 @@ export default function LoginPage() {
     if (errMsg) setError(errMsg);
     setSubmitting(false);
   };
-
-  if (loading) return <div className="flex justify-center mt-20 text-gray-400 dark:text-gray-500">Loading...</div>;
-  if (user) return null;
 
   return (
     <div className="max-w-sm mx-auto mt-20">
