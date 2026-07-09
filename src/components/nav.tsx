@@ -17,9 +17,9 @@ export default function Nav() {
             <div className="flex gap-4 text-sm">
               <Link href="/dashboard" className="text-gray-600 hover:text-gray-900">Dashboard</Link>
               <Link href="/profile" className="text-gray-600 hover:text-gray-900">Profile</Link>
-              {user.role === 'ADMIN' && (
+              {user.role === 'ADMIN' || user.role === 'MODERATOR' ? (
                 <Link href="/dashboard/admin" className="text-gray-600 hover:text-gray-900">Admin Panel</Link>
-              )}
+              ) : null}
             </div>
           )}
         </div>

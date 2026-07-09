@@ -153,5 +153,14 @@ export async function deleteUser(userId: string) {
   return authFetch<{ message: string }>(`/api/user/${userId}`, { method: 'DELETE' });
 }
 
+// ── Admin ──
+
+export async function generateInviteCodes(count: number = 1) {
+  return authFetch<{ codes: string[] }>('/api/auth/invite-codes', {
+    method: 'POST',
+    body: JSON.stringify({ count }),
+  });
+}
+
 export { getTokens, setTokens, clearTokens };
 export type { Tokens };
