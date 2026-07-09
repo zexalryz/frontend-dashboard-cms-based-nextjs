@@ -16,9 +16,9 @@ Built with **Next.js 16**, **React 19**, **TypeScript**, and **Tailwind CSS 4**.
 
 ### Dashboard
 - Role-aware landing page after login
-- **Stats cards** — account age in days, role badge with role-specific color, email display
+- **Stats cards** — account age in days, live total user count (with weekly new user delta), email display
 - **Quick-links** to Profile Settings and Admin Panel (when role permits)
-- **Recent Activity Feed** — client-side log showing login, registration, logout, password changes, and account deletion events (last 10, stored in localStorage, clearable)
+- **Recent Activity Feed** — client-side log showing login, registration, logout, password changes, and account deletion events. Persisted server-side via the activity API with automatic localStorage fallback when offline. Displayed in reverse-chronological order (last 10), clearable.
 
 ### Profile
 - View account details
@@ -60,11 +60,15 @@ All endpoints are relative to `NEXT_PUBLIC_API_URL` (default `http://localhost:4
 | POST | `/api/auth/refresh` | Refresh tokens |
 | POST | `/api/auth/invite-codes` | Generate invite codes (admin/moderator) |
 | GET | `/api/user/profile` | Get current user profile |
+| PATCH | `/api/user/profile` | Update profile (email) |
 | PATCH | `/api/user/profile/password` | Change password |
 | DELETE | `/api/user/profile` | Delete current user |
+| GET | `/api/user/stats` | Dashboard stats (total users, new-7d, role distribution) |
 | GET | `/api/user?skip=&take=` | List users (admin) |
 | PATCH | `/api/user/:id/role` | Update user role (admin) |
 | DELETE | `/api/user/:id` | Delete user (admin) |
+| POST | `/api/activity` | Log an activity event |
+| GET | `/api/activity?take=` | Get activity feed |
 
 ---
 
@@ -123,6 +127,20 @@ Open [http://localhost:3000](http://localhost:3000).
 npm run build
 npm run lint
 ```
+
+---
+
+## Activity Feed
+
+Activity events (login, registration, logout, password changes, account deletion) are logged server-side via `POST /api/activity` in a fire-and-forget pattern — the UI never waits for the API call. The dashboard fetches the feed from `GET /api/activity` on mount, falling back to `localStorage` if the API is unreachable. If the API call fails, the event is also persisted to `localStorage` as a secondary fallback, ensuring the feed works offline.
+
+| Event Type | Icon | Label |
+|-----------|------|-------|
+| `login` | 🔑 | Logged in |
+| `register` | 📝 | Created account |
+| `logout` | 🚪 | Logged out |
+| `password_change` | 🔐 | Changed password |
+| `account_delete` | 🗑️ | Deleted account |
 
 ---
 

@@ -17,7 +17,7 @@ export function logActivity(type: string, detail: string) {
     // Fallback to localStorage if API fails
     if (typeof window === 'undefined') return;
     try {
-      const feed = getActivityFeed();
+      const feed = getLocalActivityFeed();
       feed.unshift({ type, detail, timestamp: new Date().toISOString() });
       if (feed.length > MAX_EVENTS) feed.length = MAX_EVENTS;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(feed));
