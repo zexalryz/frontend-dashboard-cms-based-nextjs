@@ -15,33 +15,45 @@ export default function AdminDashboard() {
   const [error, setError] = useState('');
   const [actionMsg, setActionMsg] = useState('');
 
-  const fetchUsers = async (s: number) => {
-    setError('');
-    const res = await listUsers(s, take);
-    if (res.success && res.data) {
-      setUsers(res.data.users);
-      setTotal(res.data.total);
-      setSkip(s);
-    } else {
-      setError(res.error?.message || 'Failed to load users');
-    }
-  };
-
   useEffect(() => {
     if (!loading && !user) router.replace('/');
     if (!loading && user && user.role !== 'ADMIN') router.replace('/dashboard');
   }, [user, loading, router]);
 
   useEffect(() => {
-    if (user?.role === 'ADMIN') fetchUsers(0);
-  }, [user]);
+    if (user?.role !== 'ADMIN') return;
+    let cancelled = false;
+    listUsers(0, take).then(res => {
+      if (cancelled) return;
+      if (res.success && res.data) {
+        setUsers(res.data.users);
+        setTotal(res.data.total);
+        setSkip(0);
+      } else {
+        setError(res.error?.message || 'Failed to load users');
+      }
+    });
+    return () => { cancelled = true; };
+  }, [user, take]);
+
+  const refetch = (s: number) => {
+    listUsers(s, take).then(res => {
+      if (res.success && res.data) {
+        setUsers(res.data.users);
+        setTotal(res.data.total);
+        setSkip(s);
+      } else {
+        setError(res.error?.message || 'Failed to load users');
+      }
+    });
+  };
 
   const handleRoleChange = async (userId: string, newRole: string) => {
     setActionMsg('');
     const res = await updateRole(userId, newRole);
     if (res.success) {
       setActionMsg('Role updated');
-      fetchUsers(skip);
+      refetch(skip);
     } else {
       setError(res.error?.message || 'Failed to update role');
     }
@@ -53,7 +65,7 @@ export default function AdminDashboard() {
     const res = await deleteUser(userId);
     if (res.success) {
       setActionMsg('User deleted');
-      fetchUsers(skip);
+      refetch(skip);
     } else {
       setError(res.error?.message || 'Failed to delete user');
     }
@@ -122,7 +134,7 @@ export default function AdminDashboard() {
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-4 mt-6 text-sm">
           <button
-            onClick={() => fetchUsers(skip - take)}
+            onClick={() => refetch(skip - take)}
             disabled={skip === 0}
             className="px-3 py-1 border rounded disabled:opacity-30 hover:bg-gray-100"
           >
@@ -130,7 +142,7 @@ export default function AdminDashboard() {
           </button>
           <span className="text-gray-500">Page {currentPage} of {totalPages}</span>
           <button
-            onClick={() => fetchUsers(skip + take)}
+            onClick={() => refetch(skip + take)}
             disabled={skip + take >= total}
             className="px-3 py-1 border rounded disabled:opacity-30 hover:bg-gray-100"
           >
