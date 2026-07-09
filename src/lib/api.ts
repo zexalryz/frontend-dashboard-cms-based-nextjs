@@ -61,6 +61,19 @@ async function authFetch<T>(path: string, init?: RequestInit, retry = true): Pro
     }
   }
 
+  // Safely parse JSON — handle non-JSON error bodies (e.g. dev proxy HTML pages)
+  if (!res.ok) {
+    try {
+      return await res.json();
+    } catch {
+      return {
+        success: false,
+        error: { code: res.status, message: `Request failed (${res.status})` },
+        timestamp: new Date().toISOString(),
+      };
+    }
+  }
+
   return res.json();
 }
 

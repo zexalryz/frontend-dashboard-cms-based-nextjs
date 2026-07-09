@@ -24,15 +24,17 @@ Built with **Next.js 16**, **React 19**, **TypeScript**, and **Tailwind CSS 4**.
 - Change password
 - Delete account (with confirmation, redirects to login)
 
-### Admin Panel
-- Paginated user list (10 per page)
-- Change user roles: USER / DONATOR / MODERATOR / ADMIN (self-role protected)
-- Delete users (self-delete protected)
+### Admin / Moderator Panel
+- Accessible to ADMIN and MODERATOR roles (title adapts to role)
+- **Invite code generator** — count input (1–10), Generate button, auto-copy to clipboard, Copy All, read-only textarea display
+- **Paginated user list** (10 per page, ADMIN only)
+- **Role management** (ADMIN only) — change roles: USER / DONATOR / MODERATOR / ADMIN (self-role protected)
+- **Delete users** (ADMIN only, self-delete protected)
 - Action feedback messages
 
 ### Navigation
 - Top nav bar with role-aware links
-- Admin Panel link visible only to ADMIN role
+- Admin Panel link visible to ADMIN and MODERATOR
 - Displays current username and role badge
 - Logout button
 
@@ -48,6 +50,7 @@ All endpoints are relative to `NEXT_PUBLIC_API_URL` (default `http://localhost:4
 | POST | `/api/auth/register` | Register |
 | POST | `/api/auth/logout` | Logout |
 | POST | `/api/auth/refresh` | Refresh tokens |
+| POST | `/api/auth/invite-codes` | Generate invite codes (admin/moderator) |
 | GET | `/api/user/profile` | Get current user profile |
 | PATCH | `/api/user/profile/password` | Change password |
 | DELETE | `/api/user/profile` | Delete current user |
@@ -129,11 +132,11 @@ npm run lint
 |------|-------------|
 | USER | Dashboard, Profile |
 | DONATOR | Dashboard, Profile |
-| MODERATOR | Dashboard, Profile |
-| ADMIN | Dashboard, Profile, Admin Panel (user list, role changes, user deletion) |
+| MODERATOR | Dashboard, Profile, Admin Panel (invite code generation) |
+| ADMIN | Dashboard, Profile, Admin Panel (invite codes, user list, role changes, user deletion) |
 
 Route guards redirect unauthorized users:
 - `/dashboard` → redirects to `/` if not logged in
-- `/dashboard/admin` → redirects to `/dashboard` if not ADMIN
+- `/dashboard/admin` → redirects to `/dashboard` if not ADMIN or MODERATOR
 - `/profile` → redirects to `/` if not logged in
 - `/` → redirects to `/dashboard` or `/dashboard/admin` if already logged in
