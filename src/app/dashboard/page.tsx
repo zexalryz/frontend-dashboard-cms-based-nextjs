@@ -1,7 +1,8 @@
 'use client';
 
 import { useAuth } from '@/lib/auth-context';
-import { getActivityFeed, clearActivityFeed, ACTIVITY_LABELS, ACTIVITY_ICONS, type ActivityEvent } from '@/lib/activity';
+import { getActivityFeed, clearActivityFeed, getLocalActivityFeed, ACTIVITY_LABELS, ACTIVITY_ICONS, type ActivityEvent } from '@/lib/activity';
+import { getDashboardStats } from '@/lib/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -13,13 +14,25 @@ const ROLE_COLORS: Record<string, string> = {
   USER: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
 };
 
+interface DashboardStats {
+  totalUsers: number;
+  newUsers7d: number;
+  roleDistribution: { role: string; count: number }[];
+}
+
 export default function DashboardPage() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const [feed, setFeed] = useState<ActivityEvent[]>(() => {
     if (typeof window === 'undefined') return [];
-    return getActivityFeed();
+    return getLocalActivityFeed();
   });
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+
+  useEffect(() => {
+    getActivityFeed().then(setFeed).catch(() => {});
+    getDashboardStats().then(res => { if (res.success && res.data) setStats(res.data); }).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!loading && !user) router.replace('/');
@@ -48,7 +61,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stats row */}
+      {/* Stats row — merged personal + dashboard stats */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 dark:shadow-gray-900/50">
           <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Member for</p>
@@ -57,12 +70,9 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 dark:shadow-gray-900/50">
-          <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Role</p>
-          <p className="text-2xl font-bold dark:text-white">
-            <span className={`inline-block text-sm px-2 py-1 rounded ${ROLE_COLORS[user.role] || ''}`}>
-              {user.role}
-            </span>
-          </p>
+          <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Total Users</p>
+          <p className="text-2xl font-bold dark:text-white">{stats?.totalUsers ?? '—'}</p>
+          {stats && <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">+{stats.newUsers7d} this week</p>}
         </div>
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-4 dark:shadow-gray-900/50">
           <p className="text-xs uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1">Email</p>
@@ -100,7 +110,7 @@ export default function DashboardPage() {
           </div>
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow dark:shadow-gray-900/50">
             {feed.slice(0, 10).map((event, i) => (
-              <div key={i} className="flex items-center gap-3 px-4 py-3 border-b last:border-0 dark:border-gray-700">
+              <div key={event.id || i} className="flex items-center gap-3 px-4 py-3 border-b last:border-0 dark:border-gray-700">
                 <span className="text-lg">{ACTIVITY_ICONS[event.type] || '📌'}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm dark:text-white truncate">{ACTIVITY_LABELS[event.type] || event.type}</p>

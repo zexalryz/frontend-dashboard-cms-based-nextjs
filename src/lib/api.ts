@@ -175,5 +175,37 @@ export async function generateInviteCodes(count: number = 1) {
   });
 }
 
+// ── Activity ──
+
+export async function logActivityAPI(type: string, detail = '') {
+  return authFetch<{ id: string }>('/api/activity', {
+    method: 'POST',
+    body: JSON.stringify({ type, detail }),
+  });
+}
+
+export async function getActivityFeedAPI(take = 50) {
+  return authFetch<{ id: string; type: string; detail: string; createdAt: string }[]>(`/api/activity?take=${take}`);
+}
+
+// ── Stats ──
+
+export async function getDashboardStats() {
+  return authFetch<{
+    totalUsers: number;
+    newUsers7d: number;
+    roleDistribution: { role: string; count: number }[];
+  }>('/api/user/stats');
+}
+
+// ── Profile ──
+
+export async function updateProfile(data: { email?: string }) {
+  return authFetch<{ id: string; username: string; email: string; role: string; createdAt: string }>('/api/user/profile', {
+    method: 'PATCH',
+    body: JSON.stringify(data),
+  });
+}
+
 export { getTokens, setTokens, clearTokens };
 export type { Tokens };
